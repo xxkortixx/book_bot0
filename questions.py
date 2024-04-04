@@ -37,58 +37,61 @@ class BookInfo(StatesGroup):
     autor = State()
     info = State()
     genre = State()
-
+    
 # Обработчик для кнопки "Добавить книгу"
 @router.callback_query(F.data == 'addbook')
 async def add_book(callback: types.CallbackQuery, state: FSMContext):
     await callback.message.answer("📝Введите название книги")
     await state.set_state(BookInfo.name)
 
-# Обработчики стейтов
+#Обработчик стейта name
 @router.message(BookInfo.name)
 async def state_name(message: types.Message, state: FSMContext):
     await state.update_data(name=message.text.lower())
     await message.answer("📝Введите автора книги")
     await state.set_state(BookInfo.autor)
 
+#Обработчик стейта autor
 @router.message(BookInfo.autor)
 async def state_autor(message: types.Message, state: FSMContext):
     await state.update_data(autor=message.text.lower())
-    await message.answer("📝Напишите описание книги")
+    await message.answer("📝Напишите описание книги ")
     await state.set_state(BookInfo.info)
 
+#Обработчик стейта info
 @router.message(BookInfo.info)
 async def state_info(message: types.Message, state: FSMContext):
     await state.update_data(info=message.text.lower())
     await message.answer("📝Введите свой жанр книги или выберите ниже")
     await state.set_state(BookInfo.genre)
 
+#Обработчик стейта genre + кнопка для отправки 
 @router.message(BookInfo.genre)
 async def state_genre(message: types.Message, state: FSMContext):
     await state.update_data(genre=message.text.lower())
     reply_keyboard = button_save_book()
-    await message.answer("Нажмите на кнопку", reply_markup=reply_keyboard)
+    await message.answer("Нажмите на кнопку",reply_markup=reply_keyboard)
     global data
     data = await state.get_data()
     await state.clear()
 
-# Обработчик кнопки для добавления книги в БД
+#обработчик кнопки которая добавит книгу в бд
 @router.callback_query(F.data == "savebook")
 async def save_book(callback: types.CallbackQuery):
     reply_keyboard = main_menu()
     conn = await asyncpg.connect(
-        user=user,
-        password=password,
-        database=db_name,
-        host=host
+    user=user,
+    password=password,
+    database=db_name,
+    host=host
     )
     await conn.execute(
-        '''INSERT INTO book_library(name, autor, info, genre) 
+        '''INSERT INTO book_libry(name, autor, info, genre) 
         VALUES($1, $2, $3, $4)''',
         data['name'], data['autor'], data['info'], data['genre']
-    )
+        )
     await conn.close()
-    await callback.message.edit_text("Меню:", reply_markup=reply_keyboard)
+    await callback.message.edit_text("Меню:",reply_markup=reply_keyboard)
 
 # Обработка кнопки для вывода инструкции
 @router.callback_query(F.data == "searchbook")
@@ -144,7 +147,7 @@ async def search_books(keyword):
         database=db_name,
         host=host
     )
-    books = await conn.fetch('''SELECT id, name, autor FROM book_libry WHERE name ILIKE $1 OR autor ILIKE $1''', f'%{keyword}%')
+    books = await conn.fetch('''SELECT id, name, autor, genre FROM book_libry WHERE name ILIKE $1 OR autor ILIKE $1 OR genre ILIKE $1''', f'%{keyword}%')
     await conn.close()
     return books
 
