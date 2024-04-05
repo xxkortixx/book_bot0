@@ -2,7 +2,7 @@ import asyncpg
 from aiogram.types import InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram import types
-from data.config import user, password, db_name, host
+from config import user, password, db_name, host
 
 
 def main_menu() -> InlineKeyboardMarkup:

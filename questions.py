@@ -4,7 +4,7 @@ from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from keyboard.keyboards import main_menu, button_save_book, all_books, genre_selection_keyboard, all_genre_roman, all_genre_fairy, all_genre_story, all_books_del, keyboard_menu
+from keyboards import main_menu, button_save_book, all_books, genre_selection_keyboard, all_genre_roman, all_genre_fairy, all_genre_story, all_books_del, keyboard_menu
 from data.config import user, password, db_name, host
 
 router = Router()

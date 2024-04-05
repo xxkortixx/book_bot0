@@ -3,7 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.methods import DeleteWebhook
 import handlers.questions as questions
-from data.config import bot_token
+from config import bot_token
 
 logging.basicConfig(level=logging.INFO)
 
